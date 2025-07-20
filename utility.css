@@ -1,0 +1,26 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.bg{
+ background-color: black;
+color:#b3b3b3;
+}
+.invert{
+    filter: invert(1);
+}
+.bg-greyl{
+    background-color: #121212;
+    color: white;
+}
+.bg-greyr{
+    background-color: #212121;
+    color: white;
+}
+.flex{
+    display: flex;
+}
+.cp{
+    cursor: pointer;
+}
