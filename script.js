@@ -19,7 +19,7 @@ function secondsToMinutesSeconds(seconds) {
 
 async function getsongs(folder) {
     currentfolder = folder;
-    let a = await fetch(`/${folder}/`);
+    let a = await fetch(`./${folder}/`);
     let response = await a.text();
     let div = document.createElement("div");
     div.innerHTML = response;
@@ -28,7 +28,7 @@ async function getsongs(folder) {
     for (let i = 0; i < as.length; i++) {
         let Element = as[i];
         if (Element.href.endsWith(".mp3")) {
-            songs.push(Element.href.split(`/${folder}/`)[1]);
+            songs.push(Element.href.split(`./${folder}/`)[1]);
         };
     }
     let libname = document.querySelector(".libname");
@@ -59,7 +59,7 @@ async function getsongs(folder) {
     return songs;
 }
 const playMusic = (track, pause = false) => {
-    currentsong.src = `/${currentfolder}/` + track;
+    currentsong.src = `./${currentfolder}/` + track;
     if (!pause) {
         currentsong.play();
         play.src = "img/pause.svg";
@@ -69,7 +69,7 @@ const playMusic = (track, pause = false) => {
 }
 async function displayAlbums() {
     console.log("displaying albums")
-    let a = await fetch(`/songs/`)
+    let a = await fetch(`./songs/`)
     let response = await a.text();
     let div = document.createElement("div")
     div.innerHTML = response;
@@ -81,11 +81,11 @@ async function displayAlbums() {
         if (e.href.includes("/songs") && !e.href.includes(".htaccess")) {
             let folder = e.href.split("/").slice(-2)[0]
             // Get the metadata of the folder
-            let a = await fetch(`/songs/${folder}/info.json`)
+            let a = await fetch(`./songs/${folder}/info.json`)
             let response = await a.json();
             cardcontainer.innerHTML = cardcontainer.innerHTML + ` <div data-folder="${folder}" class="cards bg-greyr">
                         <div class="cover">
-                          <img src="/songs/${folder}/cover.jpeg" alt="">
+                          <img src="./songs/${folder}/cover.jpeg" alt="">
                           <div class="play-button">
                             <img src="img/greenplay.svg" alt="">
                            </div>
@@ -98,7 +98,7 @@ async function displayAlbums() {
     Array.from(document.getElementsByClassName("cards")).forEach(e => {
         e.addEventListener("click", async item => {
             console.log("Fetching Songs");
-            songs = await getsongs(`songs/${item.currentTarget.dataset.folder}`);
+            songs = await getsongs(`./songs/${item.currentTarget.dataset.folder}`);
             // playMusic(songs[0], true);
 
         })
@@ -107,7 +107,7 @@ async function displayAlbums() {
 }
 async function main() {
 
-    await getsongs("songs/chillout");
+    await getsongs("./songs/chillout");
     playMusic(songs[0], true);
 
     await displayAlbums();
@@ -127,14 +127,14 @@ async function main() {
     //event listeners for previous and next song
     prevsong.addEventListener("click", () => {
         console.log("Previous song clicked");
-        let currentIndex = songs.indexOf(currentsong.src.split(`/${currentfolder}/`)[1]);
+        let currentIndex = songs.indexOf(currentsong.src.split(`./${currentfolder}/`)[1]);
         if (currentIndex > 0) {
             playMusic(songs[currentIndex - 1]);
         }
     });
     nextsong.addEventListener("click", () => {
         console.log("Next song clicked");
-        let currentIndex = songs.indexOf(currentsong.src.split(`/${currentfolder}/`)[1]);
+        let currentIndex = songs.indexOf(currentsong.src.split(`./${currentfolder}/`)[1]);
         if (currentIndex < songs.length - 1) {
             playMusic(songs[currentIndex + 1]);
         }
