@@ -19,18 +19,21 @@ function secondsToMinutesSeconds(seconds) {
 
 async function getsongs(folder) {
     currentfolder = folder;
-    let a = await fetch(`./${folder}/`);
-    let response = await a.text();
-    let div = document.createElement("div");
-    div.innerHTML = response;
-    let as = div.getElementsByTagName("a");
-    songs = [];
-    for (let i = 0; i < as.length; i++) {
-        let Element = as[i];
-        if (Element.href.endsWith(".mp3")) {
-            songs.push(Element.href.split(`./${folder}/`)[1]);
-        };
-    }
+    let res = await fetch(`./${folder}/songs.json`);
+    songs = await res.json();
+
+    // let a = await fetch(`./${folder}/`);
+    // let response = await a.text();
+    // let div = document.createElement("div");
+    // div.innerHTML = response;
+    // let as = div.getElementsByTagName("a");
+    // songs = [];
+    // for (let i = 0; i < as.length; i++) {
+    //     let Element = as[i];
+    //     if (Element.href.endsWith(".mp3")) {
+    //         songs.push(Element.href.split(`./${folder}/`)[1]);
+    //     };
+    // }
     let libname = document.querySelector(".libname");
     libname.innerHTML = "";
     libname.innerHTML = libname.innerHTML + `<span>${currentfolder.split("/")[1]}</span>`;
