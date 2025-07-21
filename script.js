@@ -21,19 +21,6 @@ async function getsongs(folder) {
     currentfolder = folder;
     let res = await fetch(`./${folder}/songs.json`);
     songs = await res.json();
-
-    // let a = await fetch(`./${folder}/`);
-    // let response = await a.text();
-    // let div = document.createElement("div");
-    // div.innerHTML = response;
-    // let as = div.getElementsByTagName("a");
-    // songs = [];
-    // for (let i = 0; i < as.length; i++) {
-    //     let Element = as[i];
-    //     if (Element.href.endsWith(".mp3")) {
-    //         songs.push(Element.href.split(`./${folder}/`)[1]);
-    //     };
-    // }
     let libname = document.querySelector(".libname");
     libname.innerHTML = "";
     libname.innerHTML = libname.innerHTML + `<span>${currentfolder.split("/")[1]}</span>`;
@@ -70,44 +57,46 @@ const playMusic = (track, pause = false) => {
     document.querySelector(".info").innerHTML = track.split("-")[0] + " - " + track.split("-")[1].replace(".mp3", "");
     document.querySelector(".duration").innerHTML = "00:00/00:00";
 }
+
 async function displayAlbums() {
-    console.log("displaying albums")
-    let a = await fetch(`./songs/`)
-    let response = await a.text();
-    let div = document.createElement("div")
-    div.innerHTML = response;
-    let anchors = div.getElementsByTagName("a")
-    let cardcontainer = document.querySelector(".cardcontainer")
-    let array = Array.from(anchors)
-    for (let index = 0; index < array.length; index++) {
-        const e = array[index];
-        if (e.href.includes("/songs") && !e.href.includes(".htaccess")) {
-            let folder = e.href.split("/").slice(-2)[0]
-            // Get the metadata of the folder
-            let a = await fetch(`./songs/${folder}/info.json`)
-            let response = await a.json();
-            cardcontainer.innerHTML = cardcontainer.innerHTML + ` <div data-folder="${folder}" class="cards bg-greyr">
-                        <div class="cover">
-                          <img src="./songs/${folder}/cover.jpeg" alt="">
-                          <div class="play-button">
-                            <img src="img/greenplay.svg" alt="">
-                           </div>
+    console.log("Displaying albums");
+
+    const folders = ["chillout", "folk", "hiphop", "pop", "rock"]; 
+    const cardcontainer = document.querySelector(".cardcontainer");
+    cardcontainer.innerHTML = "";
+
+    for (let folder of folders) {
+        try {
+            // Fetch metadata from info.json
+            const infoRes = await fetch(`./songs/${folder}/info.json`);
+            const info = await infoRes.json();
+
+            cardcontainer.innerHTML += `
+                <div data-folder="${folder}" class="cards bg-greyr">
+                    <div class="cover">
+                        <img src="./songs/${folder}/cover.jpeg" alt="${info.title}">
+                        <div class="play-button">
+                            <img src="img/greenplay.svg" alt="play button">
                         </div>
-                        <h2>${response.title}</h2>
-                        <p>${response.description}</p>
-                    </div>`
+                    </div>
+                    <h2>${info.title}</h2>
+                    <p>${info.description}</p>
+                </div>
+            `;
+        } catch (error) {
+            console.error(`Failed to load info for folder: ${folder}`, error);
         }
     }
-    Array.from(document.getElementsByClassName("cards")).forEach(e => {
-        e.addEventListener("click", async item => {
-            console.log("Fetching Songs");
-            songs = await getsongs(`./songs/${item.currentTarget.dataset.folder}`);
-            // playMusic(songs[0], true);
 
-        })
-    })
-
+    // Add click events for album cards
+    Array.from(document.getElementsByClassName("cards")).forEach(card => {
+        card.addEventListener("click", async () => {
+            console.log(`Fetching songs from ${card.dataset.folder}`);
+            songs = await getsongs(`songs/${card.dataset.folder}`);
+        });
+    });
 }
+
 async function main() {
 
     await getsongs("./songs/chillout");
@@ -130,14 +119,16 @@ async function main() {
     //event listeners for previous and next song
     prevsong.addEventListener("click", () => {
         console.log("Previous song clicked");
-        let currentIndex = songs.indexOf(currentsong.src.split(`./${currentfolder}/`)[1]);
+        let filename = currentsong.src.split("/").pop();
+        let currentIndex = songs.indexOf(filename);
         if (currentIndex > 0) {
             playMusic(songs[currentIndex - 1]);
         }
     });
     nextsong.addEventListener("click", () => {
         console.log("Next song clicked");
-        let currentIndex = songs.indexOf(currentsong.src.split(`./${currentfolder}/`)[1]);
+        let filename = currentsong.src.split("/").pop();
+        let currentIndex = songs.indexOf(filename);
         if (currentIndex < songs.length - 1) {
             playMusic(songs[currentIndex + 1]);
         }
