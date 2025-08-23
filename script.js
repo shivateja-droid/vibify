@@ -61,13 +61,12 @@ const playMusic = (track, pause = false) => {
 async function displayAlbums() {
     console.log("Displaying albums");
 
-    const folders = ["chillout", "folk", "hiphop", "pop", "rock"]; 
+    const folders = ["chillout", "folk", "hiphop", "pop", "rock"];
     const cardcontainer = document.querySelector(".cardcontainer");
     cardcontainer.innerHTML = "";
 
     for (let folder of folders) {
         try {
-            // Fetch metadata from info.json
             const infoRes = await fetch(`./songs/${folder}/info.json`);
             const info = await infoRes.json();
 
@@ -138,6 +137,15 @@ async function main() {
     currentsong.addEventListener("timeupdate", () => {
         document.querySelector(".duration").innerHTML = secondsToMinutesSeconds(currentsong.currentTime) + "/" + secondsToMinutesSeconds(currentsong.duration);
         document.querySelector(".circle").style.left = (currentsong.currentTime / currentsong.duration) * 100 + "%";
+        if (currentsong.ended) {
+            play.src = "img/play.svg";
+            document.querySelector(".circle").style.left = "0%";
+            let filename = currentsong.src.split("/").pop();
+            let currentIndex = songs.indexOf(filename);
+            if (currentIndex < songs.length - 1) {
+                playMusic(songs[currentIndex + 1]);
+            }
+        }
     });
 
     //event listeners for seekbar

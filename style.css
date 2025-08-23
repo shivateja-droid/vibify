@@ -204,9 +204,15 @@ nav {
   align-items: center;
   gap: 10px;
 }
+.playnow:hover{
+  color: #1FDF64;
+}
 
 .songinfo {
   width: 50%;
+}
+.songinfo:hover{
+  color: #1FDF64;
 }
 
 .footer-links {
@@ -224,6 +230,9 @@ nav {
   text-decoration: none;
   font-size: 11px;
   margin-right: 16px;
+}
+.footer-links a:hover {
+  color: #1FDF64;
 }
 
 .cookies {
@@ -389,6 +398,11 @@ nav {
   justify-content: space-between;
   width: 265px;
 }
+
+input[type="range"] {
+  accent-color: #1FDF64; 
+}
+
 
 @media (max-width: 1299px) {
 
